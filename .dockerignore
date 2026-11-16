@@ -5,7 +5,6 @@
 **/obj
 **/node_modules
 **/build
-wwwroot/static
 **/TestResults
 **/*.user
 **/*.suo

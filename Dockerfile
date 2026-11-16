@@ -22,6 +22,7 @@ WORKDIR /app
 RUN adduser -D -u 10001 appuser
 COPY --from=app-build --chown=appuser:appuser /out/ ./
 USER appuser
-ENV ASPNETCORE_HTTP_PORTS=8080
+ENV ASPNETCORE_HTTP_PORTS=8080 \
+    ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "InventoryManagement.dll"]
