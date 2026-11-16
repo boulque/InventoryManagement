@@ -1,0 +1,15 @@
+.git
+.gitignore
+.vs
+**/bin
+**/obj
+**/node_modules
+**/build
+wwwroot/static
+**/TestResults
+**/*.user
+**/*.suo
+Dockerfile*
+docker-compose*.yml
+.env
+.env.*
