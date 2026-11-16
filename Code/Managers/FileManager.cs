@@ -9,11 +9,17 @@ namespace InventoryManagement.Code.Managers
         public Task Delete(string folderGUID);
     }
 
-    public class FileManager(ApplicationContext context, IWebHostEnvironment env) : IFileManager
+    public class FileManager : IFileManager
     {
-        public readonly string StoragePath = Path.Combine(env.ContentRootPath, "App_Data", "InvMgmt_Files");
+        public static string StoragePath = "";
 
-        private ApplicationContext db = context;
+        private ApplicationContext db;
+
+        public FileManager(ApplicationContext context, IWebHostEnvironment env)
+        {
+            db = context;
+            StoragePath = Path.Combine(env.ContentRootPath, "App_Data", "InvMgmt_Files");
+        }
 
         public async Task<ProjectFile> Upload(IFormFile imageFile)
         {
