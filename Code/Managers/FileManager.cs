@@ -11,7 +11,7 @@ namespace InventoryManagement.Code.Managers
 
     public class FileManager(ApplicationContext context) : IFileManager
     {
-        public const string STORAGE_PATH = "C:\\InvMgmt_Files";
+        public const string STORAGE_PATH = "InvMgmt_Files";
 
         private ApplicationContext db = context;
 
