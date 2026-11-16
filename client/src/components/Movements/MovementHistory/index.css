@@ -1,0 +1,54 @@
+.movement-history .history-title {
+    font-weight: bold;
+    padding: 20px;
+}
+
+.history-items .history-item {
+    color: #888888;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 5px 20px;
+}
+
+.history-items .history-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.history-items .history-item-placeholder {
+    margin: 5px 20px;
+}
+
+.history-items .history-item-placeholder {
+    background-color: #888888;
+    border-radius: 10px;
+    height: 20px;
+}
+
+.history-item span {
+    margin-right: 10px;
+}
+
+.history-item .history-item-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    vertical-align: center;
+}
+
+.icon-movement-type-0 {
+    background-image: url('../../../icons/receipt.svg');
+}
+
+.icon-movement-type-1 {
+    background-image: url('../../../icons/transfer.svg');
+}
+
+.icon-movement-type-2 {
+    background-image: url('../../../icons/dispatch.svg');
+}
+
+.history-item .history-item-warehouses {
+    font-weight: bold;
+    color: #999999;
+}

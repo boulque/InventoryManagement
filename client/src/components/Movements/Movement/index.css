@@ -1,0 +1,105 @@
+.movement {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    flex-grow: 1;
+}
+
+.movement-headers {
+    border-bottom: 1px solid #333333;
+    padding: 10px 15px;
+    display: flex;
+}
+
+.movement-headers .movement-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.movement-items {
+    margin-top: 20px;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.movement-item {
+    height: 60px;
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+.movement-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.movement-item > div {
+    box-sizing: border-box;
+}
+
+.movement-item-qty, .movement-item-image, .movement-item-remainder, .movement-item-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.movement-item-name {
+    font-weight: bold;
+}
+
+.movement-item-qty > div {
+    flex-shrink: 0;
+}
+
+.movement-item-action {
+    margin-left: 50px;
+}
+
+.movement-item-qty .qty-value, .movement-item-qty input {
+    margin: 0 5px;
+    font-weight: bold;
+    padding: 5px 0;
+    font-size: 16px;
+    width: 35px;
+    text-align: center;
+}
+
+.movement-item-qty .qty-value.editable:hover, .movement-item-qty input {
+    outline: 1px solid #999999;
+}
+
+.movement-item-qty input {
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
+@keyframes blink {
+    from {
+        transform: scale(1);
+        color: #ffffff;
+    }
+
+    50% {
+        transform: scale(2);
+        color: #c52c2c;
+    }
+
+    to {
+        transform: scale(1);
+        color: #ffffff;
+    }
+}
+
+.movement-item-qty .qty-value.blinking {
+    animation: blink 0.5s;
+}
+
+.movement-item .icon {
+    display: none;
+}
+
+.movement-item:hover .icon {
+    display: block;
+}

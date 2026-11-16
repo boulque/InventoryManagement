@@ -1,0 +1,49 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    background-color: #212121;
+    height: 70px;
+    padding-left: 20px;
+    border-bottom: 1px solid #333333;
+}
+
+.navbar .navbar-title {
+    font-size: 42px;
+    font-family: 'Courier New', Courier, monospace;
+    text-decoration: none;
+    color: white;
+}
+
+.navbar .navbar-title:hover {
+    text-shadow: #ffffff 1px 0 10px;
+}
+
+.navbar .navbar-nav {
+    margin-left: 50px;
+}
+
+.navbar .navbar-nav .navbar-page {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.navbar .navbar-nav .navbar-page::before {
+    content: ' ';
+    background-image: url('../../../icons/menu.svg');
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.navbar .navbar-user {
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.navbar .navbar-user .navbar-sign-out {
+    display: inline-block;
+    vertical-align: bottom;
+    margin-left: 10px;
+}

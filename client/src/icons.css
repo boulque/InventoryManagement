@@ -1,0 +1,54 @@
+.icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
+
+.icon-close {
+    background-image: url('./icons/close.svg');
+}
+
+.icon-close:hover {
+    background-image: url('./icons/close-hover.svg');
+}
+
+.icon-dropdown-down {
+    background-image: url('./icons/dropdown-down.svg');
+}
+
+.icon-dropdown-up {
+    background-image: url('./icons/dropdown-up.svg');
+}
+
+.icon-download {
+    background-image: url('./icons/download.svg');
+}
+
+.icon-download:hover {
+    background-image: url('./icons/download-hover.svg');
+}
+
+.icon-plus {
+    background-image: url('./icons/plus.svg');
+}
+
+.icon-plus:hover {
+    background-image: url('./icons/plus-hover.svg');
+}
+
+.icon-minus {
+    background-image: url('./icons/minus.svg');
+}
+
+.icon-minus:hover {
+    background-image: url('./icons/minus-hover.svg');
+}
+
+.icon-sign-out {
+    background-image: url('./icons/sign-out.svg');
+}
+
+.icon-sign-out:hover {
+    background-image: url('./icons/sign-out-hover.svg');
+}

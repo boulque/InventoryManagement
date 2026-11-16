@@ -1,0 +1,119 @@
+.grid {
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    flex-grow: 1;
+}
+
+.grid-headers, .grid-data .grid-row {
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 100%;
+    box-sizing: border-box;
+}
+
+.grid-headers {
+    border-bottom: 1px solid #333333;
+    padding: 5px 20px;
+    width: max-content;
+}
+
+.grid-headers .grid-header {
+    padding: 5px;
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.grid-data {
+    flex-grow: 1;
+    overflow-y: auto;
+    width: max-content;
+    min-width: 100%;
+}
+
+.grid-data .grid-row {
+    padding: 5px 20px;
+    border-radius: 20px;
+    width: max-content;
+}
+
+.grid-data .grid-row:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.grid-data .grid-row .grid-cell {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding: 0 5px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.grid-data .grid-row .grid-cell .cell-value {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grid-data .grid-row .grid-cell.align-left {
+    justify-content: start;
+}
+
+.grid-data .grid-row .grid-cell.align-center {
+    justify-content: center;
+}
+
+.grid-data .grid-row .grid-cell.align-right {
+    justify-content: end;
+}
+
+.no-image {
+    background-image: url('../../../icons/no-image.svg');
+    background-size: 70%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.grid-data .grid-row.selected {
+    background-color: #772db4;
+}
+
+.grid-data .grid-row.selected:hover {
+    background-color: #8e64b1;
+}
+
+/* Placeholders */
+.grid-cell .img-placeholder, .grid-cell .text-placeholder {
+    background-color: #888888;
+    border-radius: 10px;
+}
+
+.grid-cell .text-placeholder {
+    width: 100%;
+    height: 20px;
+}
+
+/* Icons */
+.grid-data .grid-row .grid-cell .icon {
+    display: none;
+    width: 20px;
+    height: 20px;
+    background-size: 100%;
+    cursor: pointer;
+}
+
+.grid-data .grid-row:hover .grid-cell .icon {
+    display: block;
+}
+
+.icon-trash-bin {
+    background-image: url('../../../icons/trash-bin.svg');
+}
+
+.icon-trash-bin:hover {
+    background-image: url('../../../icons/trash-bin-hover.svg');
+}

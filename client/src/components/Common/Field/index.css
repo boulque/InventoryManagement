@@ -1,0 +1,46 @@
+.field {
+    margin: 0 10px 10px 0;
+}
+
+.field .field-label {
+    font-size: 11px;
+    margin-bottom: 5px;
+    color: #888888;
+    text-transform: uppercase;
+}
+
+.field-input {
+    position: relative;
+}
+
+.field-input input {
+    width: 100%;
+    background-color: #212121;
+    color: white;
+    border: 1px solid #606060;
+    border-radius: 6px;
+    padding: 7px 11px;
+    box-sizing: border-box;
+    font-size: 13px;
+}
+
+.field-input input:focus {
+    background-color: #333333;
+    border-color: #888888;
+    outline: none;
+}
+
+.field-input.invalid input {
+    border-color: #a02424;
+}
+
+.field-input .validation-error {
+    color: #a02424;
+    font-size: 12px;
+}
+
+.field-input .dropdown-button {
+    position: absolute;
+    top: 6px;
+    right: 4px;
+}
