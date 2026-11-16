@@ -28,8 +28,8 @@ namespace InventoryManagement.Controllers
         {
             db = context;
             this.fileManager = fileManager;
-            if (!Directory.Exists(FileManager.STORAGE_PATH))
-                Directory.CreateDirectory(FileManager.STORAGE_PATH);
+            if (!Directory.Exists(FileManager.StoragePath))
+                Directory.CreateDirectory(FileManager.StoragePath);
         }
 
         [HttpGet]

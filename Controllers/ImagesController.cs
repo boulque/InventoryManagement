@@ -10,7 +10,7 @@ namespace InventoryManagement.Controllers
         [Route(@"{fileName:regex([[\w\-\.]]+)}")]
         public async Task<IActionResult> Index(string fileName)
         {
-            string filePath = Path.Combine(FileManager.STORAGE_PATH, fileName);
+            string filePath = Path.Combine(FileManager.StoragePath, fileName);
 
             var provider = new FileExtensionContentTypeProvider();
             if (!provider.TryGetContentType(filePath, out var contentType))
