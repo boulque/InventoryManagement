@@ -16,7 +16,7 @@ namespace InventoryManagement.Models
         public ProjectFile? ProjectFile { get; set; }
 
         [NotMapped]
-        public string? Image => ProjectFile != null ? "/images/" + ProjectFile.GUID + ProjectFile.Extension : null;
+        public string? Image => ProjectFile?.Url;
 
         [NotMapped]
         public string? ImageFolderGUID => ProjectFile?.FolderGUID;

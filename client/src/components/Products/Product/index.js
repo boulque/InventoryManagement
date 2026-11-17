@@ -132,4 +132,4 @@ function Product({product, setProduct, reload, toggleLoading}) {
     </>;
 }
 
-export default Product
+export default Product;

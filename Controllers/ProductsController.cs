@@ -22,14 +22,14 @@ namespace InventoryManagement.Controllers
         }
 
         private ApplicationContext db;
-        private IFileManager fileManager;
+        private IRemoteFileManager fileManager;
 
-        public ProductsController(ApplicationContext context, IFileManager fileManager)
+        public ProductsController(ApplicationContext context, IRemoteFileManager fileManager)
         {
             db = context;
             this.fileManager = fileManager;
-            if (!Directory.Exists(FileManager.StoragePath))
-                Directory.CreateDirectory(FileManager.StoragePath);
+            //if (!Directory.Exists(FileManager.StoragePath))
+            //    Directory.CreateDirectory(FileManager.StoragePath);
         }
 
         [HttpGet]

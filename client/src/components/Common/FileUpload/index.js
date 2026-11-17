@@ -1,5 +1,6 @@
 import React from 'react';
-import './index.css'
+import './index.css';
+import Requests from '../../../requests.js';
 
 function FileUpload({label, folderGUID, isMultiple = true, isImage = false, property, sendValue, toggleLoading}) {
     const inputRef = React.useRef(null);
@@ -27,22 +28,19 @@ function FileUpload({label, folderGUID, isMultiple = true, isImage = false, prop
             setImageUrl(null);
             return;
         }
-        
-        toggleLoading(true);
-        const response = await fetch(`/api/files/${folderGUID}`);
+
+        const response = await Requests.withLoading(
+            async () => await Requests.request(`/api/files/${folderGUID}`), 
+            toggleLoading
+        );
         
         if (!response.ok)
-        {
-            toggleLoading(false);
-            throw new Error(await response.text());
-        }
+            return;
         
         filesRef.current = await response.json();
         
         if (isImage)
-            setImageUrl(`/images/${filesRef.current[0].guid + filesRef.current[0].extension}`);
-        
-        toggleLoading(false);
+            setImageUrl(filesRef.current[0].url);
     };
 
     React.useEffect(() => {
@@ -56,8 +54,8 @@ function FileUpload({label, folderGUID, isMultiple = true, isImage = false, prop
         e.stopPropagation();
     };
 
-    const download = (e, guid) => {
-        window.open(`/api/files/download/${guid}`).focus();
+    const download = (e) => {
+        window.open(filesRef.current[0].url).focus();
         e.stopPropagation();
     };
 
@@ -76,7 +74,7 @@ function FileUpload({label, folderGUID, isMultiple = true, isImage = false, prop
                 {isImage &&
                     <div className="file-tools" style={{display: imageUrl ? 'flex' : 'none'}}>
                         {canDownload &&
-                            <div className="icon icon-download" title="Download" onClick={(e) => download(e, filesRef.current[0].guid)} />}
+                            <div className="icon icon-download" title="Download" onClick={download} />}
                         <div className="icon icon-close" title="Clear image" onClick={clear} />
                     </div>}
             </div>

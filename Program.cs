@@ -25,11 +25,11 @@ builder.Services.AddAuthentication()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-//string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 string connectionString = Environment.GetEnvironmentVariable("IMConnectionString")!;
 
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IFileManager, FileManager>();
+builder.Services.AddScoped<IRemoteFileManager, RemoteFileManager>();
 builder.Services.AddScoped<IInventoryItemManager, InventoryItemManager>();
 
 var app = builder.Build();
