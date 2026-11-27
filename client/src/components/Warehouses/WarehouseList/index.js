@@ -8,10 +8,11 @@ import Warehouse from '../Warehouse';
 import Toolbar from '../../Common/Toolbar';
 import Grid from '../../Common/Grid';
 import Message from '../../Common/Message';
+import Requests from '../../../requests.js';
 
 function WarehouseList({setTitle}) {
     const checkDelete = async (id) => {
-        const response = await fetch('/api/stockmovements/haslines?warehouseID=' + id);
+        const response = await Requests.request('/api/stockmovements/haslines?warehouseID=' + id);
 
         if (!response.ok)
             return;
@@ -39,18 +40,18 @@ function WarehouseList({setTitle}) {
     const gridCols = [
         {
             name: 'Name',
-            property: 'name',
+            display: i => i.name,
             width: 220
         },
         {
             name: 'Type',
-            property: 'type',
+            display: i => i.type,
             width: 100,
             list: warehouseTypes
         },
         {
             name: 'Address',
-            property: 'address',
+            display: i => i.address,
             width: 220
         },
         {

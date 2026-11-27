@@ -55,6 +55,33 @@ namespace InventoryManagement.Migrations
                     b.ToTable("InventoryItems");
                 });
 
+            modelBuilder.Entity("InventoryManagement.Models.Message", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("StockMovementID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("StockMovementID");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("InventoryManagement.Models.Product", b =>
                 {
                     b.Property<int>("ID")
@@ -146,6 +173,9 @@ namespace InventoryManagement.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
+                    b.Property<int>("UserID")
+                        .HasColumnType("integer");
+
                     b.HasKey("ID");
 
                     b.HasIndex("FromWarehouseID");
@@ -222,6 +252,15 @@ namespace InventoryManagement.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("InventoryManagement.Models.Message", b =>
+                {
+                    b.HasOne("InventoryManagement.Models.StockMovement", "StockMovement")
+                        .WithMany()
+                        .HasForeignKey("StockMovementID");
+
+                    b.Navigation("StockMovement");
                 });
 
             modelBuilder.Entity("InventoryManagement.Models.Product", b =>

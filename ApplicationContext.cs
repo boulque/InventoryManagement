@@ -11,5 +11,6 @@ namespace InventoryManagement
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<StockMovement> StockMovements { get; set; }
         public DbSet<StockMovementLine> StockMovementLines { get; set; }
+        public DbSet<Message> Messages { get; set; }
     }
 }

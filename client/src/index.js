@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import Navbar from './components/Common/Navbar';
 import './index.css';
 import './icons.css';
+import './tabs.css';
 import ProductList from './components/Products/ProductList';
 import WarehouseList from './components/Warehouses/WarehouseList';
 import React from 'react';
@@ -54,7 +55,7 @@ function MainPage() {
       <UnauthorizedRedirect />
       <Navbar title={title} user={user} setUser={setUser} pages={pages} />
       <Routes>
-        <Route index element={<Navigate to="/products" />} />
+        <Route index element={<Navigate to="/movements" />} />
         <Route path="/products" element={<ProductList setTitle={setTitle} />} />
         <Route path="/warehouses" element={<WarehouseList setTitle={setTitle} />} />
         <Route path="/movements" element={<Movements setTitle={setTitle} />} />

@@ -34,6 +34,7 @@ namespace InventoryManagement.Code.Managers
                 Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY"),
                 config
             );
+
             db = context;
         }
 

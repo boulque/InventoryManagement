@@ -53,6 +53,8 @@
 }
 
 .popup .popup-body {
+    display: flex;
+    flex-direction: column;
     padding: 20px 0;
     min-height: 80px;
 }
@@ -74,6 +76,10 @@
 
 .popup .popup-buttons button:hover {
     background: #c52c2c;
+}
+
+.popup .popup-buttons button:active {
+    background: #ca8787;
 }
 
 .popup .popup-buttons button.secondary {

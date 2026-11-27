@@ -2,17 +2,18 @@ import React from 'react';
 import './index.css';
 import { movementTypes } from '../../../lists';
 import MovementPopup from '../MovementPopup';
+import Requests from '../../../requests.js';
 
-function MovementHistory({ref, toggleLoading}) {
-    const [stockMovements, setStockMovements] = React.useState(null);
+function MovementHistory({ref, stockMovements, setStockMovements, formatDate, toggleLoading}) {
     const [isMovementPopupActive, setIsMovementPopupActive] = React.useState(false);
-    const [stockMovement, setStockMovement] = React.useState(null);
+    const [stockMovementID, setStockMovementID] = React.useState(null);
+    const itemsRef = React.useRef(null);
 
     const loadStockMovements = async () => {
-        const response = await fetch('/api/stockmovements');
+        const response = await Requests.request('/api/stockmovements');
             
         if (!response.ok)
-            throw new Error(await response.text());
+            return;
         
         const data = await response.json();
         for (let i = 0; i < data.length; i++) {
@@ -20,8 +21,13 @@ function MovementHistory({ref, toggleLoading}) {
             data[i].typeText = movementTypes.find(t => t.value === data[i].type)?.name ?? '';
         }
 
-        setStockMovements(data);
+        setStockMovements(data.sort((m1, m2) => m1.id - m2.id));
     };
+
+    React.useLayoutEffect(() => {
+        if (stockMovements !== null && itemsRef.current)
+            itemsRef.current.scrollTop = itemsRef.current.scrollHeight;
+    }, [stockMovements]);
 
     React.useImperativeHandle(ref, () => ({
         reload: () => {
@@ -31,38 +37,23 @@ function MovementHistory({ref, toggleLoading}) {
     }));
 
     React.useEffect(() => {
-        loadStockMovements();
+        if (!stockMovements)
+            loadStockMovements();
     }, []);
 
-    const showMovement = async (id) => {
-        toggleLoading(true);
-        try {
-            const response = await fetch(`/api/stockmovements/${id}`);
-            
-            if (!response.ok)
-                throw new Error(await response.text());
-            
-            const data = await response.json();
-            data.date = new Date(data.createdAt);
-
-            setStockMovement(data);
-            setIsMovementPopupActive(true);
-        } finally {
-            toggleLoading(false);
-        }
+    const showMovement = (id) => {
+        setStockMovementID(id);
+        setIsMovementPopupActive(true);
     };
-
-    const formatDate = (date) => date.toLocaleDateString() + ' ' + date.getHours() + ':' + date.getMinutes();
     
     return (
         <>
             <div className="movement-history">
-                <div className="history-title">Movement History</div>
-                <div className="history-items">
-                    {stockMovements ? 
+                <div ref={itemsRef} className="history-items">
+                    {stockMovements ?
                         stockMovements.map(m =>
-                            <div className="history-item" onClick={() => showMovement(m.id)}>
-                                <div className={'history-item-icon icon-movement-type-' + m.type} />
+                            <div key={m.id} className="history-item" onClick={() => showMovement(m.id)}>
+                                <div className={'movement-icon icon-movement-type-' + m.type} />
                                 <span className="history-item-date">{formatDate(m.date)}</span>
                                 <span className="history-item-warehouses">
                                     {[1, 2].includes(m.type) ? m.fromWarehouse.name : ''}{m.type === 1 ? ' → ' : ''}{[0, 1].includes(m.type) ? m.toWarehouse.name : ''}
@@ -71,12 +62,13 @@ function MovementHistory({ref, toggleLoading}) {
                                 <span className="history-item-quantity">{m.quantity} item(s)</span>
                             </div>
                         ) : Array(5).keys().map(_ =>
-                            <div className="history-item-placeholder" />
+                            <div className="item-placeholder" />
                         )}
                 </div>
             </div>
             {isMovementPopupActive &&
-                <MovementPopup stockMovement={stockMovement} onClose={() => setIsMovementPopupActive(false)} />}
+                <MovementPopup stockMovementID={stockMovementID} onClose={() => setIsMovementPopupActive(false)}
+                    formatDate={formatDate} toggleLoading={toggleLoading} />}
         </>
     );
 }

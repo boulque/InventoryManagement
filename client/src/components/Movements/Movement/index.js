@@ -1,11 +1,9 @@
 import React from 'react';
 import Field from '../../Common/Field';
-import { productCategories, productBrands } from '../../../lists.js';
-import './index.css'
-import Confirm from '../../Common/Confirm';
 import Toolbar from '../../Common/Toolbar';
 import Message from '../../Common/Message';
 import Requests from '../../../requests.js';
+import MovementItems from '../MovementItems/index.js';
 
 function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reload, reloadHistory}) {
     const defaultValidationResults = {
@@ -15,15 +13,12 @@ function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reloa
     const [barcode, setBarcode] = React.useState('');
     const [comment, setComment] = React.useState('');
     const [movementItems, setMovementItems] = React.useState(null);
-    const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
-    const [confirmText, setConfirmText] = React.useState('');
-    const [deletingProductID, setDeletingProductID] = React.useState('');
     const [isMessageOpen, setIsMessageOpen] = React.useState(false);
     const [messageText, setMessageText] = React.useState('');
 
     React.useImperativeHandle(ref, () => ({
         clear: () => setMovementItems(null),
-        hasItems: () => movementItems && movementItems.length !== 0
+        hasItems: () => movementItems && movementItems.length > 0
     }));
 
     const openMessage = (text) => {
@@ -50,7 +45,7 @@ function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reloa
                 toWarehouseID: type === 2 ? null : warehouseID,
                 comment: comment,
                 inventoryItems: movementItems.map(item => ({
-                    productID: item.productID,
+                    productID: item.product.id,
                     quantity: item.quantity
                 }))
             })
@@ -83,8 +78,6 @@ function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reloa
     ];
 
     const fieldRef = React.useRef(null);
-
-    const imgSize = 50;
 
     const onKeyDown = (e) => {
         if (e.key === 'Enter')
@@ -128,7 +121,7 @@ function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reloa
         }
 
         if (movementItems && [1, 2].includes(type)) {
-            const scannedItem = movementItems.find(item => item.productID === data[0].id);
+            const scannedItem = movementItems.find(item => item.product.id === data[0].id);
             if (scannedItem && scannedItem.quantity >= scannedItem.remainder) {
                 setValidationResults({ barcode: {isValid: false, error: 'The quantity reached max value'} });
                 toggleLoading(false);
@@ -136,21 +129,23 @@ function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reloa
             }
         }
 
-        if (movementItems?.some(item => item.productID === data[0].id)) {
-            setMovementItems(prev => prev.map(i => i.productID === data[0].id ? 
+        if (movementItems?.some(item => item.product.id === data[0].id)) {
+            setMovementItems(prev => prev.map(i => i.product.id === data[0].id ? 
                 {...i, quantity: i.quantity + 1, blink: true} : i));
 
             setTimeout(() => {
-                setMovementItems(prev => prev.map(i => i.productID === data[0].id ? 
+                setMovementItems(prev => prev.map(i => i.product.id === data[0].id ? 
                 {...i, blink: false} : i));
             }, 500);
         } else {   
             const movementItem = {
-                productID: data[0].id,
-                image: data[0].image,
-                name: data[0].name,
-                category: data[0].category,
-                brand: data[0].brand,
+                product: {
+                    id: data[0].id,
+                    image: data[0].image,
+                    name: data[0].name,
+                    category: data[0].category,
+                    brand: data[0].brand
+                },
                 remainder: data[0].remainder,
                 quantity: 1,
                 blink: false,
@@ -169,111 +164,19 @@ function Movement({ref, warehouseID, type, fromWarehouseID, toggleLoading, reloa
         fieldRef.current?.focus();
     }, []);
 
-    const decrease = (item) => {
-        setMovementItems(prev => prev.map(i => i === item && i.quantity > 1 ?
-            {...i, quantity: i.quantity - 1} : i));
-    };
-
-    const increase = (item) => {
-        setMovementItems(prev => prev.map(i => i === item && (type === 0 || i.quantity < i.remainder) ?
-            {...i, quantity: i.quantity + 1} : i));
-    };
-
-    const confirmRemove = (item) => {
-        setDeletingProductID(item.productID);
-        setConfirmText(`Are you sure you want to delete row with product '${item.name}'?`);
-        setIsConfirmOpen(true);
-    };
-
-    const remove = () => {
-        setMovementItems(prev => prev.filter(i => i.productID !== deletingProductID));
-    };
-
-    const editStart = (item) => {
-        setMovementItems(prev => prev.map(i => i === item ?
-            {...i, edit: true} : i
-        ));
-    };
-
-    const editEnd = (item) => {
-        setMovementItems(prev => prev.map(i => i === item ?
-            {...i, edit: false, quantity: [1, 2].includes(type) && i.quantity > i.remainder ? i.remainder : i.quantity} : i
-        ));
-    };
-
-    const onEdit = (e, item) => {
-        const val = parseInt(e.target.value, 10);
-        if (isNaN(val) || val < 1)
-            return;
-        setMovementItems(prev => prev.map(i => i === item ?
-            {...i, quantity: val} : i
-        ));
-    };
-
-    const onEditKeyDown = (e, item) => {
-        if (e.key === 'Enter')
-            editEnd(item);
-    };
-
     return (
         <>
             <Toolbar buttons={buttons} />
             <div className="details">
-                <div className="movement">
-                    <div className="columns">
-                        <Field ref={fieldRef} value={barcode} sendValue={(_, val) => setBarcode(val)} onKeyDown={onKeyDown} width={400}
-                            placeholder="Scan a barcode" validationResult={validationResults.barcode} />
-                        <button className="button" onClick={submit}>Submit</button>
-                    </div>
-                    <Field value={comment} sendValue={(_, val) => setComment(val)} width={400} placeholder="Comment..." />
+                <div className="movement" style={{width: 'fit-content'}}>
+                    <Field value={comment} sendValue={(_, val) => setComment(val)} width={500} placeholder="Write a comment"
+                        isTextArea={true} />
+                    <Field ref={fieldRef} value={barcode} sendValue={(_, val) => setBarcode(val)} onKeyDown={onKeyDown} width={500}
+                        placeholder="Scan a barcode, press Enter to submit" validationResult={validationResults.barcode} />
                     {movementItems &&
-                        <>
-                            <div className="movement-headers">
-                                <div className="movement-header" style={{width: imgSize}} />
-                                <div className="movement-header" style={{width: 400, paddingLeft: 10}}>Product</div>
-                                <div className="movement-header" style={{width: 80, textAlign: 'center'}}>Quantity</div>
-                                {(type === 1 || type === 2) &&
-                                    <div className="movement-header" style={{width: 80, textAlign: 'center', paddingLeft: 20}}>Remainder</div>}
-                            </div>
-                            <div className="movement-items">
-                                {movementItems.map(item => (
-                                    <div key={item.productID} className="movement-item columns">
-                                        {item.image ? 
-                                            <div className="movement-item-image" style={{width: imgSize}}>
-                                                <img src={item.image} style={{maxWidth: imgSize, maxHeight: imgSize}} />
-                                            </div> :
-                                            <div className="no-image" style={{width: imgSize, height: imgSize}} />}
-                                        <div className="movement-item-info" style={{width: 400, paddingLeft: 10}}>
-                                            <div className="movement-item-name">{item.name}</div>
-                                            <div className="columns" style={{marginTop: 10}}>
-                                                <div>{productCategories.find(cat => cat.value == item.category)?.name ?? ''}</div>
-                                                <div style={{marginLeft: 20}}>{productBrands.find(br => br.value == item.brand)?.name ?? ''}</div>
-                                            </div>
-                                        </div>
-                                        <div className="movement-item-qty" style={{width: 80}}>
-                                            <div className="icon icon-minus" title="Decrease" onClick={() => decrease(item)} />
-                                            {item.edit ? <input type="text" value={item.quantity} autoFocus onFocus={(e) => e.target.select()} onBlur={() => editEnd(item)} 
-                                                onChange={(e) => onEdit(e, item)} onKeyDown={(e) => onEditKeyDown(e, item)} /> :
-                                                <div className={'qty-value editable' + (item.blink ? ' blinking' : '')} 
-                                                    title="Quantity" onClick={() => editStart(item)}>{item.quantity}</div>}
-                                            <div className="icon icon-plus" title="Increase" onClick={() => increase(item)} />
-                                        </div>
-                                        {(type === 1 || type === 2) &&
-                                            <div className="movement-item-remainder" style={{width: 80, paddingLeft: 20}}>
-                                                <div>{item.remainder}</div>
-                                            </div>}
-                                        <div className="movement-item-action">
-                                            <div className="icon icon-close" title="Delete" onClick={() => confirmRemove(item)} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </>}
+                        <MovementItems scanMode={true} type={type} movementItems={movementItems} setMovementItems={setMovementItems} />}
                 </div>
             </div>
-            {isConfirmOpen &&
-                <Confirm onClose={() => setIsConfirmOpen(false)}
-                    text={confirmText} onConfirm={remove} />}
             {isMessageOpen &&
                 <Message message={messageText} onClose={() => setIsMessageOpen(false)} />}
         </>

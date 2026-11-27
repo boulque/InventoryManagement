@@ -1,6 +1,15 @@
 .icon {
     width: 20px;
     height: 20px;
+    
+}
+
+.small-icon {
+    width: 12px;
+    height: 12px;
+}
+
+.icon, .small-icon {
     cursor: pointer;
     background-repeat: no-repeat;
 }
@@ -51,4 +60,26 @@
 
 .icon-sign-out:hover {
     background-image: url('./icons/sign-out-hover.svg');
+}
+
+/* Buttons */
+
+button.has-icon {
+    padding-left: 34px;
+    padding-right: 14px;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 11px;
+}
+
+button.icon-add {
+    background-image: url('./icons/add.svg');
+}
+
+button.icon-save {
+    background-image: url('./icons/save.svg');
+}
+
+button.icon-finish {
+    background-image: url('./icons/finish.svg');
 }

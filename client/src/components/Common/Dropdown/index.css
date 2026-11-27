@@ -8,12 +8,15 @@
     background-color: #212121;
     box-sizing: border-box;
     border-radius: 6px;
+    overflow-y: auto;
 }
 
 .dropdown-list .dropdown-item {
     padding: 10px;
     font-size: 13px;
     cursor: pointer;
+    box-sizing: border-box;
+    height: 37px;
 }
 
 .dropdown-list .dropdown-item:hover {

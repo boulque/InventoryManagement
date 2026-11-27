@@ -7,12 +7,18 @@
 
 .toolbar .toolbar-button {
     border: none;
-    background: none;
+    background-color: transparent;
     border-radius: 20px;
-    padding: 10px 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     color: #ba82e7;
     cursor: pointer;
     font-weight: bold;
+}
+
+.toolbar .toolbar-button:not(.has-icon) {
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .toolbar .toolbar-button:not(.disabled):hover {
@@ -21,24 +27,4 @@
 
 .toolbar .toolbar-button.disabled {
     opacity: 0.5;
-}
-
-.toolbar .toolbar-button.has-icon {
-    padding-left: 34px;
-    padding-right: 14px;
-    background-repeat: no-repeat;
-    background-size: 20px;
-    background-position: 11px;
-}
-
-.toolbar .toolbar-button.icon-add {
-    background-image: url('../../../icons/add.svg');
-}
-
-.toolbar .toolbar-button.icon-save {
-    background-image: url('../../../icons/save.svg');
-}
-
-.toolbar .toolbar-button.icon-finish {
-    background-image: url('../../../icons/finish.svg');
 }

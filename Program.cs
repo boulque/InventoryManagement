@@ -19,7 +19,6 @@ builder.Services.AddAuthentication()
     .AddCookie(options =>
     {
         options.LoginPath = "/login";
-        options.LogoutPath = "/logout";
     });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

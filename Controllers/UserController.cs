@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using InventoryManagement.Code;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +11,6 @@ namespace InventoryManagement.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private record AppUser(int ID, string Name);
-
-        private List<AppUser> appUsers =
-        [
-            new(1, "Admin"),
-            new(2, "Manager"),
-            new(3, "Worker")
-        ];
-
         [Route("[action]")]
         [AllowAnonymous]
         public async Task<IActionResult> Current()
@@ -26,7 +18,7 @@ namespace InventoryManagement.Controllers
             string? userID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             AppUser? appUser = !string.IsNullOrEmpty(userID) ?
-                appUsers.FirstOrDefault(x => x.ID == int.Parse(userID)) : null;
+                SystemData.AppUsers.FirstOrDefault(x => x.ID == int.Parse(userID)) : null;
 
             return Json(appUser);
         }
@@ -35,7 +27,7 @@ namespace InventoryManagement.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(int id)
         {
-            AppUser? appUser = appUsers.FirstOrDefault(x => x.ID == id);
+            AppUser? appUser = SystemData.AppUsers.FirstOrDefault(x => x.ID == id);
             if (appUser == null)
             {
                 return BadRequest("Invalid user ID");

@@ -1,0 +1,35 @@
+.chat {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat, .chat .messages {
+    flex: 1;
+    min-height: 0;
+}
+
+.chat .messages {
+    overflow: auto;
+}
+
+.messages .message {
+    padding: 5px 10px;
+}
+
+.message .message-date, .message .message-author {
+    color: #888888;
+}
+
+.message .message-author {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.message .message-text {
+    white-space: pre-wrap;
+}
+
+.chat .field-area {
+    height: 120px;
+    padding-top: 20px;
+}

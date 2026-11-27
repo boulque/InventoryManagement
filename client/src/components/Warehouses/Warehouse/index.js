@@ -2,6 +2,7 @@ import Field from '../../Common/Field';
 import Toolbar from '../../Common/Toolbar';
 import React from 'react';
 import { warehouseTypes } from '../../../lists.js';
+import Requests from '../../../requests.js';
 
 function Warehouse({warehouse, setWarehouse, reload, toggleLoading}) {
     const defaultValidationResults = {
@@ -38,7 +39,6 @@ function Warehouse({warehouse, setWarehouse, reload, toggleLoading}) {
         if (!validate())
             return;
 
-        toggleLoading(true);
         const data = new FormData();
 
         data.append('id', warehouseDraft.id);
@@ -46,20 +46,21 @@ function Warehouse({warehouse, setWarehouse, reload, toggleLoading}) {
         data.append('address', warehouseDraft.address.trim());
         data.append('type', parseInt(warehouseDraft.type));
 
-        const response = await fetch('/api/warehouses', {
-            method: 'PUT',
-            body: data
-        });
+        const response = await Requests.withLoading(
+            async () => await Requests.request('/api/warehouses', {
+                method: 'PUT',
+                body: data
+            }),
+            toggleLoading
+        );
 
         if (!response.ok)
-        {
-            toggleLoading(false);
-            throw new Error(await response.text());
-        }
+            return;
 
-        await reload();
+        if (reload)
+            await Requests.withLoading(reload, toggleLoading);
+        
         setWarehouse(warehouseDraft);
-        toggleLoading(false);
     };
 
     const toolbarButtons = [

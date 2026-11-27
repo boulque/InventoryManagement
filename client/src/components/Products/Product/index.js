@@ -3,6 +3,7 @@ import FileUpload from '../../Common/FileUpload';
 import Toolbar from '../../Common/Toolbar';
 import React from 'react';
 import { productCategories, productBrands } from '../../../lists.js';
+import Requests from '../../../requests.js';
 
 function Product({product, setProduct, reload, toggleLoading}) {
     const defaultValidationResults = {
@@ -46,23 +47,21 @@ function Product({product, setProduct, reload, toggleLoading}) {
     };
 
     const checkDuplicates = async () => {
-        toggleLoading(true);
         let hasDulicates = false;
 
-        try {
-            const response = await fetch(`/api/products?barcode=${productDraft.barcode}`);
-            
-            if (!response.ok)
-                throw new Error(await response.text());
+        const response = await Requests.withLoading(
+            async () => await Requests.request(`/api/products?barcode=${encodeURIComponent(productDraft.barcode)}`),
+            toggleLoading
+        );
 
-            const data = await response.json();
+        if (!response.ok)
+            return;
 
-            if (data.length !== 0 && data[0].id != product.id) {
-                setValidationResults(prev => ({...prev, barcode: {isValid: false, error: 'Product with this barcode already exists'}}));
-                hasDulicates = true;
-            }
-        } finally {
-            toggleLoading(false);
+        const data = await response.json();
+
+        if (data.length !== 0 && data[0].id != product.id) {
+            setValidationResults(prev => ({...prev, barcode: {isValid: false, error: 'Product with this barcode already exists'}}));
+            hasDulicates = true;
         }
         
         return !hasDulicates;
@@ -76,33 +75,33 @@ function Product({product, setProduct, reload, toggleLoading}) {
         if (!await checkDuplicates())
             return;
 
-        toggleLoading(true);
-        try {
-            const data = new FormData();
-            
-            data.append('id', productDraft.id);
-            data.append('name', productDraft.name.trim());
-            data.append('imageFile', productDraft.imageFile && productDraft.imageFile.length > 0 ? productDraft.imageFile[0] : null);
-            data.append('imageChanged', productDraft.imageChanged);
-            data.append('category', parseInt(productDraft.category));
-            data.append('brand', parseInt(productDraft.brand));
-            data.append('barcode', productDraft.barcode);
-            
-            const response = await fetch('/api/products', {
+        const data = new FormData();
+        
+        data.append('id', productDraft.id);
+        data.append('name', productDraft.name.trim());
+        data.append('imageFile', productDraft.imageFile && productDraft.imageFile.length > 0 ? productDraft.imageFile[0] : null);
+        data.append('imageChanged', productDraft.imageChanged);
+        data.append('category', parseInt(productDraft.category));
+        data.append('brand', parseInt(productDraft.brand));
+        data.append('barcode', productDraft.barcode);
+        
+        const response = await Requests.withLoading(
+            async () => await Requests.request('/api/products', {
                 method: 'PUT',
                 body: data
-            });
-            
-            if (!response.ok)
-                throw new Error(await response.text());
-            
-            await reload();
-            const saved = {...productDraft, imageFile: null, imageChanged: false};
-            setProductDraft(saved);
-            setProduct(saved);
-        } finally {
-            toggleLoading(false);
-        }
+            }),
+            toggleLoading
+        );
+
+        if (!response.ok)
+            return;
+        
+        if (reload)
+            await Requests.withLoading(reload, toggleLoading);
+
+        const saved = {...productDraft, imageFile: null, imageChanged: false};
+        setProductDraft(saved);
+        setProduct(saved);
     };
 
     const toolbarButtons = [

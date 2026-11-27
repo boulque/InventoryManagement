@@ -21,11 +21,13 @@ namespace InventoryManagement.Controllers
                     m.ID,
                     m.FromWarehouse,
                     m.ToWarehouse,
+                    m.UserName,
                     m.Type,
                     m.CreatedAt,
                     m.Comment,
                     null,
                     m.StockMovementLines!.Sum(ml => ml.Quantity)))
+                .Take(50)
                 .ToListAsync();
 
             return Json(stockMovements);
@@ -40,6 +42,7 @@ namespace InventoryManagement.Controllers
                     m.ID,
                     m.FromWarehouse,
                     m.ToWarehouse,
+                    m.UserName,
                     m.Type,
                     m.CreatedAt,
                     m.Comment,
@@ -51,8 +54,7 @@ namespace InventoryManagement.Controllers
                                 ml.Product.Name,
                                 ml.Product.Category,
                                 ml.Product.Brand,
-                                ml.Product.ProjectFile != null ? 
-                                    "/images/" + ml.Product.ProjectFile.GUID + ml.Product.ProjectFile.Extension : null,
+                                ml.Product.ProjectFile != null ? ml.Product.ProjectFile.Url : null,
                                 ml.Product.ProjectFile != null ? ml.Product.ProjectFile.FolderGUID : null),
                            ml.Quantity))
                         .ToList(),

@@ -2,12 +2,13 @@
 using InventoryManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace InventoryManagement.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InventoryItemsController : Controller
+    public class InventoryItemsController(ApplicationContext context, IInventoryItemManager inventoryItemManager) : Controller
     {
         public class MovementRequest
         {
@@ -18,14 +19,8 @@ namespace InventoryManagement.Controllers
             public List<InventoryItem>? InventoryItems { get; set; }
         }
 
-        private ApplicationContext db;
-        private IInventoryItemManager inventoryItemManager;
-
-        public InventoryItemsController(ApplicationContext context, IInventoryItemManager inventoryItemManager)
-        {
-            db = context;
-            this.inventoryItemManager = inventoryItemManager;
-        }
+        private ApplicationContext db = context;
+        private IInventoryItemManager inventoryItemManager = inventoryItemManager;
 
         [HttpGet]
         public async Task<IActionResult> List(int warehouseID)
@@ -42,7 +37,7 @@ namespace InventoryManagement.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Receipt(MovementRequest movementRequest)
+        public async Task<IActionResult> Receipt([FromBody] MovementRequest movementRequest)
         {
             if (movementRequest.InventoryItems == null)
                 return BadRequest();
@@ -61,7 +56,7 @@ namespace InventoryManagement.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Transfer(MovementRequest movementRequest)
+        public async Task<IActionResult> Transfer([FromBody] MovementRequest movementRequest)
         {
             if (movementRequest.InventoryItems == null)
                 return BadRequest();
@@ -84,7 +79,7 @@ namespace InventoryManagement.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Dispatch(MovementRequest movementRequest)
+        public async Task<IActionResult> Dispatch([FromBody] MovementRequest movementRequest)
         {
             if (movementRequest.InventoryItems == null)
                 return BadRequest();
@@ -103,8 +98,11 @@ namespace InventoryManagement.Controllers
 
         private async Task AddStockMovement(MovementRequest movementRequest)
         {
+            string userID = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
             StockMovement stockMovement = new()
             {
+                UserID = int.Parse(userID),
                 FromWarehouseID = movementRequest.FromWarehouseID,
                 ToWarehouseID = movementRequest.ToWarehouseID,
                 Type = (MovementType)movementRequest.Type,

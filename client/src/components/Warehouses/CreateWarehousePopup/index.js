@@ -2,6 +2,7 @@ import React from 'react';
 import Popup from '../../Common/Popup';
 import Field from '../../Common/Field';
 import { warehouseTypes } from '../../../lists.js';
+import Requests from '../../../requests.js';
 
 function CreateWarehousePopup({onClose, callback, toggleLoading}) {
     const defaultValidationResults = {
@@ -41,29 +42,31 @@ function CreateWarehousePopup({onClose, callback, toggleLoading}) {
         if (!validate())
             return;
 
-        toggleLoading(true);
-
         const data = new FormData();
 
         data.append('name', warehouse.name.trim());
         data.append('address', warehouse.address.trim());
         data.append('type', parseInt(warehouse.type));
 
-        const response = await fetch('/api/warehouses', {
-            method: 'POST',
-            body: data
-        });
+        const response = await Requests.withLoading(
+            async () => await Requests.request('/api/warehouses', {
+                method: 'POST',
+                body: data
+            }),
+            toggleLoading
+        );
 
         if (!response.ok)
-        {
-            toggleLoading(false);
-            throw new Error(await response.text());
-        }
+            return;
 
         onClose();
-        if (callback)
-            await callback((await response.json()).id);
-        toggleLoading(false);
+
+        if (callback) {
+            await Requests.withLoading(
+                async () => await callback((await response.json()).id), 
+                toggleLoading
+            );
+        }
     };
 
     const buttons = [

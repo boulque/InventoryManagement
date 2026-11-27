@@ -3,6 +3,7 @@ import Field from '../../Common/Field';
 import React from 'react';
 import FileUpload from '../../Common/FileUpload';
 import { productCategories, productBrands } from '../../../lists.js';
+import Requests from '../../../requests.js';
 
 function CreateProductPopup({onClose, callback, toggleLoading}) {
     const defaultValidationResults = {
@@ -49,23 +50,21 @@ function CreateProductPopup({onClose, callback, toggleLoading}) {
     };
 
     const checkDuplicates = async () => {
-        toggleLoading(true);
         let hasDulicates = false;
 
-        try {
-            const response = await fetch(`/api/products?barcode=${encodeURIComponent(product.barcode)}`);
-            
-            if (!response.ok)
-                throw new Error(await response.text());
+        const response = await Requests.withLoading(
+            async () => await Requests.request(`/api/products?barcode=${encodeURIComponent(product.barcode)}`),
+            toggleLoading
+        );
 
-            const data = await response.json();
+        if (!response.ok)
+            return;
 
-            if (data.length !== 0) {
-                setValidationResults(prev => ({...prev, barcode: {isValid: false, error: 'Product with this barcode already exists'}}));
-                hasDulicates = true;
-            }
-        } finally {
-            toggleLoading(false);
+        const data = await response.json();
+
+        if (data.length !== 0) {
+            setValidationResults(prev => ({...prev, barcode: {isValid: false, error: 'Product with this barcode already exists'}}));
+            hasDulicates = true;
         }
         
         return !hasDulicates;
@@ -80,8 +79,6 @@ function CreateProductPopup({onClose, callback, toggleLoading}) {
         if (!await checkDuplicates())
             return;
 
-        toggleLoading(true);
-
         const data = new FormData();
 
         data.append('name', product.name.trim());
@@ -90,21 +87,25 @@ function CreateProductPopup({onClose, callback, toggleLoading}) {
         data.append('brand', parseInt(product.brand));
         data.append('barcode', product.barcode);
 
-        const response = await fetch('/api/products', {
-            method: 'POST',
-            body: data
-        });
+        const response = await Requests.withLoading(
+            async () => await Requests.request('/api/products', {
+                method: 'POST',
+                body: data
+            }),
+            toggleLoading
+        );
 
         if (!response.ok)
-        {
-            toggleLoading(false);
-            throw new Error(await response.text());
-        }
+            return;
 
         onClose();
-        if (callback)
-            await callback((await response.json()).id);
-        toggleLoading(false);
+
+        if (callback) {
+            Requests.withLoading(
+                async () => await callback((await response.json()).id), 
+                toggleLoading
+            );
+        }
     };
 
     const buttons = [

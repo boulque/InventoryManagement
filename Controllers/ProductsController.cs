@@ -2,7 +2,9 @@
 using InventoryManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Web;
+using System.Xml.Linq;
 
 namespace InventoryManagement.Controllers
 {
@@ -21,6 +23,12 @@ namespace InventoryManagement.Controllers
             public string Barcode { get; set; } = "";
         }
 
+        public class ImportRequest
+        {
+            [Required]
+            public string Xml { get; set; } = "";
+        }
+
         private ApplicationContext db;
         private IRemoteFileManager fileManager;
 
@@ -28,17 +36,17 @@ namespace InventoryManagement.Controllers
         {
             db = context;
             this.fileManager = fileManager;
-            //if (!Directory.Exists(FileManager.StoragePath))
-            //    Directory.CreateDirectory(FileManager.StoragePath);
         }
 
         [HttpGet]
-        public async Task<IActionResult> List(string? barcode, int? warehouseID)
+        public async Task<IActionResult> List(string? barcode, int? warehouseID, int? brand, int? category)
         {
             barcode = HttpUtility.UrlDecode(barcode);
 
             List<Product> products = await db.Products
-                .Where(p => string.IsNullOrEmpty(barcode) || p.Barcode == barcode)
+                .Where(p => (string.IsNullOrEmpty(barcode) || p.Barcode == barcode) &&
+                    (brand == null || p.Brand == brand) &&
+                    (category == null || p.Category == category))
                 .Include(p => p.ProjectFile)
                 .OrderByDescending(p => p.ID)
                 .ToListAsync();
@@ -147,6 +155,32 @@ namespace InventoryManagement.Controllers
 
             // Delete product
             db.Products.Remove(product);
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> Import([FromBody] ImportRequest request)
+        {
+            XDocument xDoc = XDocument.Parse(request.Xml);
+
+            List<Product> products = [];
+            int idx = 1;
+
+            foreach (XElement xProduct in xDoc.Root!.Elements("Product"))
+            {
+                products.Add(new Product
+                {
+                    Name = xProduct.Element("Name")!.Value,
+                    Category = int.Parse(xProduct.Element("Category")!.Value),
+                    Brand = int.Parse(xProduct.Element("Brand")!.Value),
+                    Barcode = idx++.ToString()
+                });
+            }
+
+            await db.Products.AddRangeAsync(products);
             await db.SaveChangesAsync();
 
             return Ok();

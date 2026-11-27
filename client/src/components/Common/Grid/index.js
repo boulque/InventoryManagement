@@ -39,14 +39,14 @@ function Grid({cols, data, rowHeight, height, selectedID, setSelectedID, onSelec
                         {cols.map(col =>
                             <div className={'grid-cell' + (col.align ? ' align-' + col.align : '')} style={{width: col.width ?? defaultColWidth}}>
                                 {col.type == colType.Image ? (
-                                    line[col.property] ? <img src={line[col.property]} style={{maxHeight: imgSize, maxWidth: imgSize}} /> :
+                                    col.display(line) ? <img src={col.display(line)} style={{maxHeight: imgSize, maxWidth: imgSize}} /> :
                                     <div className="no-image" style={{height: imgSize, width: imgSize}} />
                                 ) : col.type == colType.Icon ? (
                                     <div className={'icon icon-' + col.icon} onClick={() => col.onClick(line.id)} />
                                 ) : <div className="cell-value">
                                         {col.list ? 
-                                            (col.list.find(list => list.value === line[col.property])?.name ?? '') : 
-                                            line[col.property]}
+                                            (col.list.find(list => list.value === col.display(line))?.name ?? '') : 
+                                            col.display(line)}
                                     </div>}
                             </div>
                         )}

@@ -48,7 +48,7 @@ function Login({setTitle, setUser}) {
             <div className="login">
                 <Field label="Log in as" value={userID} sendValue={(_, value) => setUserID(value)} options={users} />
                 <center>
-                    <button className="button" onClick={login}>Login</button>
+                    <button className="button" onClick={login}>Log in</button>
                 </center>
             </div>
             {isMessageOpen &&

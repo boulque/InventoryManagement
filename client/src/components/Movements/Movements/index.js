@@ -1,7 +1,7 @@
 import React from 'react';
 import Field from '../../Common/Field';
 import Loading from '../../Common/Loading';
-import {colType, cellAlign} from '../../../enums.js';
+import { colType, cellAlign } from '../../../enums.js';
 import { productBrands, productCategories, movementTypes } from '../../../lists.js';
 import Cookies from '../../../cookies.js';
 import Grid from '../../Common/Grid';
@@ -9,6 +9,8 @@ import Movement from '../Movement';
 import Confirm from '../../Common/Confirm';
 import MovementHistory from '../MovementHistory';
 import Requests from '../../../requests.js';
+import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
+import Chat from '../Chat';
 
 function Movements({setTitle}) {
     const [isLoadingActive, setIsLoadingActive] = React.useState(false);
@@ -23,6 +25,10 @@ function Movements({setTitle}) {
         fromWarehouseID: Cookies.getNumber('FromWarehouseID')
     });
     const [pendingParams, setPendingParams] = React.useState(null);
+
+    const [stockMovements, setStockMovements] = React.useState(null);
+    const [messages, setMessages] = React.useState(null);
+
     const movementRef = React.useRef(null);
     const historyRef = React.useRef(null);
 
@@ -50,8 +56,10 @@ function Movements({setTitle}) {
         (movementParams.movementType !== 1 || movementParams.fromWarehouseID !== null);
 
     const loadWarehouses = async () => {
-        const response = await Requests.withLoading(async () => await Requests.request('/api/warehouses'),
-            setIsLoadingActive);
+        const response = await Requests.withLoading(
+            async () => await Requests.request('/api/warehouses'),
+            setIsLoadingActive
+        );
         
         if (!response.ok)
             return;
@@ -105,32 +113,32 @@ function Movements({setTitle}) {
 
     const gridCols = [
         {
-            property: 'image',
+            display: i => i.image,
             type: colType.Image,
             align: cellAlign.Center,
             width: 70
         },
         {
             name: 'Name',
-            property: 'name',
+            display: i => i.name,
             width: 220
         },
         {
+            name: 'Quantity',
+            display: i => i.quantity,
+            width: 100
+        },
+        {
             name: 'Category',
-            property: 'category',
+            display: i => i.category,
             width: 140,
             list: productCategories
         },
         {
             name: 'Brand',
-            property: 'brand',
+            display: i => i.brand,
             width: 140,
             list: productBrands
-        },
-        {
-            name: 'Quantity',
-            property: 'quantity',
-            width: 100
         }
     ];
 
@@ -153,6 +161,11 @@ function Movements({setTitle}) {
         sendValue(pendingParams.property, pendingParams.value);
         setPendingParams(null);
     };
+
+    const formatDate = (date) => new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'short',
+        timeStyle: 'short',
+    }).format(date);
 
     return (
         <div className="workspace">
@@ -195,7 +208,22 @@ function Movements({setTitle}) {
                     </>}
             </div>
             <div className="right-pane" style={{width: 500}}>
-                <MovementHistory ref={historyRef} toggleLoading={setIsLoadingActive} />
+                <Tabs>
+                    <TabList>
+                        <Tab>Chat</Tab>
+                        <Tab>History</Tab>
+                    </TabList>
+
+                    <TabPanel>
+                        <Chat messages={messages} setMessages={setMessages} formatDate={formatDate} 
+                            toggleLoading={setIsLoadingActive} />
+                    </TabPanel>
+
+                    <TabPanel>
+                        <MovementHistory ref={historyRef} stockMovements={stockMovements} setStockMovements={setStockMovements}
+                            formatDate={formatDate} toggleLoading={setIsLoadingActive} />
+                    </TabPanel>
+                </Tabs>
             </div>
             {isConfirmOpen &&
                 <Confirm onClose={onClose} text={confirmText} onConfirm={onConfirm} />}

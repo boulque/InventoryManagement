@@ -13,9 +13,9 @@ export function useEntityList({ setTitle, title, url, entityName, checkDelete })
     const [isMessageOpen, setIsMessageOpen] = React.useState(false);
     const [messageText, setMessageText] = React.useState('');
 
-    const load = async () => {
+    const load = async (query) => {
         const response = await Requests.withLoading(
-            async () => await Requests.request(url),
+            async () => await Requests.request(url + (query ?? '')),
             setIsLoadingActive
         );
         if (!response.ok)

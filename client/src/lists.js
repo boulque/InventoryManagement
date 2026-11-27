@@ -7,6 +7,10 @@ export const productCategories = [
     {
         value: 1,
         name: 'Tablet'
+    },
+    {
+        value: 2,
+        name: 'Laptop'
     }
 ];
 
@@ -18,6 +22,38 @@ export const productBrands = [
     {
         value: 1,
         name: 'Samsung'
+    },
+    {
+        value: 2,
+        name: 'Lenovo'
+    },
+    {
+        value: 3,
+        name: 'Huawei'
+    },
+    {
+        value: 4,
+        name: 'Xiaomi'
+    },
+    {
+        value: 5,
+        name: 'Asus'
+    },
+    {
+        value: 6,
+        name: 'Microsoft'
+    },
+    {
+        value: 7,
+        name: 'Google'
+    },
+    {
+        value: 8,
+        name: 'OnePlus'
+    },
+    {
+        value: 9,
+        name: 'Honor'
     }
 ];
 

@@ -1,0 +1,18 @@
+.linked-movement {
+    padding: 5px 8px 5px 5px;
+    border: 1px solid #ba82e7;
+    border-radius: 15px;
+    background-color: #372744;
+    font-size: 12px;
+    height: fit-content;
+    display: inline-block;
+}
+
+.linked-movement > div {
+    display: inline-block;
+    vertical-align: center;
+}
+
+.linked-movement .clear-movement {
+    margin-left: 10px;
+}

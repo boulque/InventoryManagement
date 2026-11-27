@@ -1,9 +1,19 @@
 import React from 'react';
-import './index.css'
+import './index.css';
 
 function Dropdown({refElement, ignoreRef, options, closeDropdown, onSelect}) {
     const width = refElement.getBoundingClientRect().width;
-    const top = refElement.getBoundingClientRect().bottom + window.scrollY;
+    
+    const itemHeight = 37;
+    const height = Math.max(options.length, 1) * itemHeight + 2;
+
+    const onTopY = refElement.getBoundingClientRect().top + window.scrollY - height;
+
+    const onTop = window.innerHeight - refElement.getBoundingClientRect().bottom < height;
+
+    const top = onTop ?
+        onTopY > 0 ? onTopY : 0 :
+        refElement.getBoundingClientRect().bottom + window.scrollY;
 
     React.useEffect(() => {
         const handleClickOutside = (e) => {
@@ -19,10 +29,12 @@ function Dropdown({refElement, ignoreRef, options, closeDropdown, onSelect}) {
     }, []);
 
     return (
-        <ul className="dropdown-list" style={{top: top, width: width}}>
-            {options.map(opt => <li key={opt.value} className="dropdown-item" onClick={() => onSelect(opt.value)}>
-                {opt.name}
-            </li>)}
+        <ul className="dropdown-list" style={{top: top, width: width, maxHeight: onTop ? refElement.getBoundingClientRect().top : null}}>
+            {options.length > 0 ?
+                options.map(opt => <li key={opt.value} className="dropdown-item" onClick={() => onSelect(opt.value)}>
+                    {opt.name}
+                </li>) :
+                <li className="dropdown-item" onClick={() => onSelect(null)} />}
         </ul>
     );
 }

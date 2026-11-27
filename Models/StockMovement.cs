@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using InventoryManagement.Code;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryManagement.Models
 {
@@ -12,6 +13,8 @@ namespace InventoryManagement.Models
         public int? ToWarehouseID { get; set; }
         public Warehouse? ToWarehouse { get; set; }
 
+        public int UserID { get; set; }
+
         public MovementType Type { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
@@ -19,7 +22,10 @@ namespace InventoryManagement.Models
         public string? Comment { get; set; }
 
         [NotMapped]
-        public int Quantity { get; set; }
+        public int Quantity => StockMovementLines != null ? StockMovementLines.Sum(line => line.Quantity) : 0;
+
+        [NotMapped]
+        public string UserName => SystemData.AppUsers.First(u => u.ID == UserID).Name;
 
         public List<StockMovementLine>? StockMovementLines { get; set; }
     }
@@ -35,6 +41,7 @@ namespace InventoryManagement.Models
         int ID,
         Warehouse? FromWarehouse,
         Warehouse? ToWarehouse,
+        string UserName,
         MovementType Type,
         DateTimeOffset CreatedAt,
         string? Comment,
