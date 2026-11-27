@@ -6,3 +6,6 @@ Inventory Management is a web application for managing product inventories and w
 ## Structure
 Root folder contains web application files as well as docker files.
 The React-based client part is in the "client" folder.
+
+## Website
+Visit https://inventorymanagement-lpq1.onrender.com to look at the working website
